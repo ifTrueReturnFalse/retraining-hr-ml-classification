@@ -52,5 +52,16 @@ def get_correlated(
     ]
 
 
-def create_pipeline(preprocessor, model_name, model) -> Pipeline:
-    return Pipeline([("preprocessor", clone(preprocessor)), (model_name, model)])
+def create_pipeline(preprocessor, model_name, model, extra_steps=None) -> Pipeline:
+    steps = [("preprocessor", clone(preprocessor))]
+
+    if extra_steps:
+        steps.extend(extra_steps)
+
+    steps.append((model_name, model))
+
+    return Pipeline(steps)
+
+
+def remove_redundancy(dataframe: pd.DataFrame, columns: List[str]) -> pd.DataFrame:
+    return dataframe.drop(columns=columns)
